@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consultoria Esportiva</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b0c;
+    --bg-elev: #131315;
+    --surface: #17181a;
+    --surface-2: #1f2023;
+    --border: #2a2b2e;
+    --red: #f2c230;
+    --red-deep: #7a5e0e;
+    --red-glow: rgba(242, 194, 48, 0.35);
+    --text: #f4f2ef;
+    --muted: #99999e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+
+  /* subtle grain overlay for a less flat, more premium feel */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  h1, h2, h3, .brand { font-family: 'Anton', sans-serif; font-weight: 400; letter-spacing: 0.01em; line-height: 1.05; }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  button { font-family: inherit; }
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+  :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+
+  /* ---------- Scroll progress ---------- */
+
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--red-deep), var(--red));
+    z-index: 200;
+  }
+
+  /* ---------- Header ---------- */
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(11, 11, 12, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; }
+  .brand { font-size: 22px; letter-spacing: 0.02em; }
+  .brand span { color: var(--red); }
+
+  .nav-links { display: flex; gap: 32px; font-size: 15px; color: var(--muted); }
+  .nav-links a { position: relative; padding: 4px 0; transition: color 0.2s ease; }
+  .nav-links a::after {
+    content: ''; position: absolute; left: 0; bottom: -2px; height: 2px; width: 0;
+    background: var(--red); transition: width 0.25s ease;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+  .nav-links a.active { color: var(--text); }
+
+  .nav-cta {
+    background: var(--red); color: #0b0b0c; padding: 10px 20px; border-radius: 4px;
+    font-weight: 600; font-size: 14px; white-space: nowrap; transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .nav-cta:hover { background: #d9ad1f; transform: translateY(-1px); }
+
+  .burger {
+    display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px;
+  }
+  .burger span { width: 22px; height: 2px; background: var(--text); transition: transform 0.25s ease, opacity 0.25s ease; }
+  .burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .burger.open span:nth-child(2) { opacity: 0; }
+  .burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-panel {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 24px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mobile-panel.open { display: flex; }
+  .mobile-panel a { padding: 12px 0; color: var(--muted); border-bottom: 1px solid var(--border); font-size: 15px; }
+  .mobile-panel a:last-child { border-bottom: none; }
+
+  @media (max-width: 760px) {
+    .nav-links, .nav-cta { display: none; }
+    .burger { display: flex; }
+  }
+
+  /* ---------- Hero ---------- */
+
+  .hero { padding: 80px 0 100px; position: relative; overflow: hidden; }
+
+  .hero-glow {
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 480px; height: 480px;
+    background: radial-gradient(circle, var(--red-glow), transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; position: relative; }
+  @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+  .eyebrow { color: var(--red); font-weight: 600; font-size: 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .eyebrow::before { content: ''; width: 18px; height: 2px; background: var(--red); }
+
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); margin-bottom: 20px; }
+  .hero p.lead { color: var(--muted); font-size: 18px; max-width: 46ch; margin-bottom: 32px; }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px; background: var(--red); color: #0b0b0c;
+    padding: 16px 28px; border-radius: 4px; font-weight: 600; font-size: 16px;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    z-index: 0;
+    isolation: isolate;
+  }
+  .btn-primary:hover { background: #d9ad1f; transform: translateY(-1px); box-shadow: 0 8px 24px var(--red-glow); }
+  .btn-primary:hover::before { animation-play-state: paused; }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute; inset: 0; border-radius: 4px;
+    background: var(--red);
+    opacity: 0.55;
+    z-index: -1;
+    animation: btn-ring 1.6s ease-out infinite;
+  }
+
+  @keyframes btn-ring {
+    0% { transform: scale(1); opacity: 0.55; }
+    100% { transform: scale(1.18); opacity: 0; }
+  }
+
+  .hero-stats { display: flex; gap: 40px; margin-top: 48px; }
+  .stat-num { font-family: 'Anton', sans-serif; font-size: 36px; color: var(--red); line-height: 1; }
+  .stat-label { color: var(--muted); font-size: 13px; margin-top: 6px; }
+
+  .photo-swap {
+    position: relative; width: 100%; aspect-ratio: 4 / 5; border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--border); background: linear-gradient(160deg, var(--surface), var(--surface-2));
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6);
+    transition: box-shadow 0.6s ease, border-color 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    isolation: isolate;
+  }
+  .photo-swap:hover, .photo-swap:focus-within {
+    border-color: var(--red);
+    transform: translateY(-6px);
+    box-shadow: 0 40px 90px -24px rgba(0,0,0,0.75), 0 0 0 1px rgba(242,194,48,0.28), 0 0 70px -12px var(--red-glow);
+  }
+  .photo-swap img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  /* vinheta permanente — dá profundidade e "encaixa" a foto no tema escuro */
+  .photo-swap::after {
+    content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 38%, transparent 48%, rgba(0,0,0,0.55) 100%);
+  }
+
+  /* brilho diagonal que varre a foto ao passar o mouse */
+  .photo-swap::before {
+    content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.16) 50%, transparent 58%);
+    transform: translateX(-130%);
+    transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .photo-swap:hover::before, .photo-swap:focus-within::before {
+    transform: translateX(130%);
+  }
+
+  .photo-swap .foto-base {
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 1.15s cubic-bezier(0.22, 1, 0.36, 1), filter 0.9s ease;
+    filter: grayscale(0) brightness(1);
+    transform: scale(1);
+  }
+  .photo-swap:hover .foto-base, .photo-swap:focus-within .foto-base {
+    opacity: 0;
+    transform: scale(1.08);
+    filter: grayscale(0.5) brightness(0.7);
+  }
+
+  .photo-swap .foto-pose {
+    opacity: 0;
+    transform: scale(1.12);
+    filter: blur(10px) brightness(0.65) saturate(0.8);
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1), filter 0.9s ease;
+  }
+  .photo-swap:hover .foto-pose, .photo-swap:focus-within .foto-pose {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0) brightness(1.08) saturate(1.15);
+  }
+
+
+  /* ---------- Ticker ---------- */
+
+  .ticker-wrap { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg-elev); overflow: hidden; }
+  .ticker { display: flex; gap: 48px; padding: 14px 0; white-space: nowrap; animation: ticker-scroll 22s linear infinite; width: max-content; }
+  .ticker span { font-size: 13px; letter-spacing: 0.04em; color: var(--muted); display: flex; align-items: center; gap: 12px; }
+  .ticker span::after { content: '•'; color: var(--red); margin-left: 12px; }
+  @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ---------- Section shared ---------- */
+
+  section { padding: 96px 0; }
+  .section-head { max-width: 60ch; margin-bottom: 48px; }
+  .section-head h2 { font-size: clamp(28px, 4vw, 40px); margin-bottom: 16px; }
+  .section-head p { color: var(--muted); font-size: 16px; }
+  .divider { border: none; border-top: 1px solid var(--border); }
+
+  /* ---------- Sobre ---------- */
+
+  .sobre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  @media (max-width: 780px) { .sobre-grid { grid-template-columns: 1fr; } }
+  .sobre-text { border-left: 2px solid var(--red); padding-left: 24px; }
+  .sobre-grid p { color: #cfcfd1; font-size: 16px; margin-bottom: 16px; }
+  .credenciais { list-style: none; }
+  .credenciais li { padding: 14px 0; border-bottom: 1px solid var(--border); color: #cfcfd1; display: flex; gap: 12px; }
+  .credenciais li:first-child { padding-top: 0; }
+  .credenciais li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--red); margin-top: 9px; flex-shrink: 0; }
+
+  /* ---------- Serviços ---------- */
+
+  .servicos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 860px) { .servicos-grid { grid-template-columns: 1fr; } }
+
+  .servico-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 32px 28px;
+    transition: border-color 0.25s ease, transform 0.25s ease; position: relative; overflow: hidden;
+  }
+  .servico-card::before {
+    content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--red-glow), transparent 60%);
+    opacity: 0; transition: opacity 0.3s ease;
+  }
+  .servico-card:hover { border-color: var(--red); transform: translateY(-4px); }
+  .servico-card:hover::before { opacity: 1; }
+  .servico-card .icon {
+    width: 42px; height: 42px; border-radius: 8px; background: var(--red-deep); color: var(--red);
+    display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-size: 18px;
+    margin-bottom: 20px; position: relative;
+  }
+  .servico-card h3 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 10px; position: relative; }
+  .servico-card p { color: var(--muted); font-size: 15px; position: relative; }
+
+  /* ---------- Metodologia (vídeos) ---------- */
+
+  .metodologia-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  @media (max-width: 860px) { .metodologia-grid { grid-template-columns: 1fr; } }
+
+  .video-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  .video-card:hover { border-color: var(--red); transform: translateY(-4px); }
+
+  .video-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+  .video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+  .video-placeholder {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; text-align: center; padding: 24px; background: linear-gradient(160deg, var(--surface), var(--surface-2));
+    color: var(--muted); font-size: 14px;
+  }
+  .video-placeholder strong { color: var(--text); font-family: 'Anton', sans-serif; letter-spacing: 0.02em; font-size: 16px; font-weight: 400; }
+
+  .video-caption {
+    padding: 18px 22px; font-weight: 600; font-size: 15px; color: var(--text);
+    border-top: 1px solid var(--border);
+  }
+  .video-caption span { display: block; color: var(--muted); font-weight: 400; font-size: 13px; margin-top: 4px; }
+
+  /* revelar ao rolar — "aparece do nada" */
+  .reveal {
+    opacity: 0; transform: translateY(48px);
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal.in-view { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ---------- Instagram — carrossel de stories empilhado ---------- */
+
+  .insta-head {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;
+    margin-bottom: 40px;
+  }
+  .insta-handle {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--red); color: #0b0b0c; font-weight: 700; font-size: 15px;
+    padding: 12px 22px; border-radius: 999px; transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .insta-handle:hover { background: #d9ad1f; transform: translateY(-1px); }
+  .insta-handle svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  .stories-carousel { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+
+  .stories-stage {
+    position: relative; width: 100%; max-width: 900px; height: 420px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .story-peek {
+    position: absolute; width: 190px; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden;
+    background: linear-gradient(160deg, var(--surface), var(--surface-2)); border: 1px solid var(--border);
+    filter: blur(1.5px) brightness(0.55); opacity: 0.85;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+    cursor: pointer; z-index: 1;
+  }
+  .story-peek.left { transform: translateX(-158px) rotate(-8deg) scale(0.92); }
+  .story-peek.right { transform: translateX(158px) rotate(8deg) scale(0.92); }
+  .story-peek:hover { opacity: 1; filter: blur(1px) brightness(0.7); }
+  .story-peek img, .story-peek video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  .story-main {
+    position: relative; width: 260px; aspect-ratio: 9 / 16; border-radius: 18px; overflow: hidden;
+    background: linear-gradient(160deg, var(--surface), var(--surface-2)); border: 1px solid var(--border);
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(242,194,48,0.15);
+    z-index: 2; transition: transform 0.3s ease;
+  }
+  .story-main img, .story-main video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  .story-main::after {
+    content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 35%, transparent 70%, rgba(0,0,0,0.35) 100%);
+  }
+
+  .story-main-mute {
+    position: absolute; top: 22px; right: 12px; z-index: 4; width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(0,0,0,0.55); border: none; color: #fff; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 14px;
+  }
+
+  .story-progress {
+    position: absolute; top: 8px; left: 8px; right: 8px; z-index: 4; display: flex; gap: 4px;
+  }
+  .story-progress-seg { flex: 1; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
+  .story-progress-seg i { display: block; height: 100%; width: 0%; background: #fff; }
+  .story-progress-seg.done i { width: 100%; }
+  .story-progress-seg.active i { animation: story-fill linear forwards; animation-duration: var(--story-dur, 5000ms); }
+  .story-progress-seg.active.paused i { animation-play-state: paused; }
+  @keyframes story-fill { from { width: 0%; } to { width: 100%; } }
+
+  .story-tap { position: absolute; top: 0; bottom: 0; width: 32%; z-index: 3; background: none; border: none; cursor: pointer; }
+  .story-tap.prev { left: 0; }
+  .story-tap.next { right: 0; }
+
+  .story-main-caption {
+    position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 2;
+    color: #fff; font-weight: 600; font-size: 14px; text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+  }
+
+  .story-main-placeholder, .story-peek-placeholder {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; text-align: center; padding: 20px; color: var(--muted);
+  }
+  .story-main-placeholder strong, .story-peek-placeholder strong {
+    font-family: 'Anton', sans-serif; color: var(--red); font-weight: 400; letter-spacing: 0.02em;
+  }
+  .story-main-placeholder strong { font-size: 20px; }
+  .story-peek-placeholder strong { font-size: 15px; }
+  .story-main-placeholder span, .story-peek-placeholder span { font-size: 12px; }
+
+  @media (max-width: 640px) {
+    .stories-stage { height: 340px; }
+    .story-main { width: 200px; }
+    .story-peek { width: 150px; }
+    .story-peek.left { transform: translateX(-118px) rotate(-8deg) scale(0.9); }
+    .story-peek.right { transform: translateX(118px) rotate(8deg) scale(0.9); }
+  }
+
+  .stories-thumbs-row { display: flex; align-items: center; gap: 14px; width: 100%; max-width: 480px; }
+
+  .stories-nav {
+    flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); font-size: 16px; display: flex; align-items: center;
+    justify-content: center; cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .stories-nav:hover { border-color: var(--red); color: var(--red); }
+
+  .stories-thumbs {
+    flex: 1; display: flex; gap: 10px; overflow-x: auto; padding: 4px;
+    scrollbar-width: thin; scrollbar-color: var(--red) transparent;
+  }
+  .stories-thumbs::-webkit-scrollbar { height: 5px; }
+  .stories-thumbs::-webkit-scrollbar-thumb { background: var(--red); border-radius: 999px; }
+
+  .story-thumb {
+    position: relative; flex: 0 0 auto; width: 48px; aspect-ratio: 9 / 16; border-radius: 8px; overflow: hidden;
+    background: var(--surface-2); border: 2px solid transparent; cursor: pointer; transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .story-thumb.active { border-color: var(--red); transform: translateY(-3px); }
+  .story-thumb img, .story-thumb video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .story-thumb-placeholder {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 9px; text-align: center; color: var(--muted); padding: 2px;
+  }
+
+  /* ---------- Evolução (gráficos de barras com/sem consultoria) ---------- */
+
+  .evo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 780px) { .evo-grid { grid-template-columns: 1fr; } }
+
+  .evo-chart-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 24px 20px 20px; transition: border-color 0.3s ease;
+  }
+  .evo-chart-card.highlight { border-color: var(--red); box-shadow: 0 0 50px -18px var(--red-glow); }
+
+  .evo-chart-label {
+    text-align: center; font-family: 'Anton', sans-serif; font-weight: 400; letter-spacing: 0.03em;
+    font-size: 16px; color: var(--muted); text-transform: uppercase; margin-bottom: 14px;
+  }
+  .evo-chart-label.gold { color: var(--red); }
+
+  .evo-chart-mount svg { width: 100%; height: auto; display: block; }
+
+  .evo-bg-rect { fill: url(#evoBgGradient); }
+  .evo-bg-rect.without-bg { opacity: 0.55; }
+
+  .evo-bar { transition: height 0.2s ease; }
+  .evo-curve { fill: none; stroke: #f7f4ec; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+  .evo-curve-dot { fill: #f7f4ec; }
+  .evo-baseline { stroke: var(--red); stroke-width: 4; }
+  .evo-bracket { stroke: #f7f4ec; stroke-width: 2; fill: none; opacity: 0.85; }
+  .evo-level-label { fill: #f7f4ec; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.03em; text-anchor: middle; }
+
+  .evo-note { color: var(--muted); font-size: 13px; margin-top: 20px; text-align: center; }
+
+  .evo-chart-card.reveal-bars .evo-bar { stroke-dashoffset: 0; }
+
+  /* ---------- Resultados / comparador antes-depois ---------- */
+
+  .compare {
+    position: relative; width: 100%; aspect-ratio: 16 / 10; border-radius: 10px; overflow: hidden;
+    border: 1px solid var(--border); background: var(--surface); cursor: ew-resize; user-select: none;
+  }
+  .compare-side { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-size: 15px; letter-spacing: 0.04em; color: var(--muted); }
+  .compare-before { background: linear-gradient(160deg, #1c1c1e, #101011); }
+  .compare-after-wrap { position: absolute; inset: 0; overflow: hidden; clip-path: inset(0 50% 0 0); }
+  .compare-after { background: linear-gradient(160deg, var(--red-deep), #1c1c1e); }
+  .compare-label { position: absolute; top: 16px; padding: 6px 14px; border-radius: 999px; background: rgba(0,0,0,0.55); font-size: 12px; letter-spacing: 0.05em; }
+  .compare-label.left { left: 16px; }
+  .compare-label.right { right: 16px; }
+  .compare-handle {
+    position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; background: var(--red);
+    transform: translateX(-50%); pointer-events: none;
+  }
+  .compare-handle::after {
+    content: '↔'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 40px; height: 40px; background: var(--red); color: #0b0b0c; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+  .compare-range { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+  .compare-note { color: var(--muted); font-size: 13px; margin-top: 12px; text-align: center; }
+  .compare-side img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  .resultado-meta { text-align: center; margin-top: 24px; }
+  .resultado-aluno { font-weight: 700; font-size: 16px; }
+  .resultado-periodo { color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+  /* ---------- Depoimentos ---------- */
+
+  .testi-wrap { position: relative; max-width: 720px; margin: 0 auto; }
+  .testi-track { overflow: hidden; }
+  .testi-slides { display: flex; transition: transform 0.4s ease; }
+  .testi-slide { min-width: 100%; padding: 8px; }
+  .testi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 36px; text-align: center; }
+  .testi-card p.quote { font-size: 18px; color: #e6e4e1; margin-bottom: 20px; }
+  .testi-name { font-weight: 700; font-size: 15px; }
+  .testi-role { color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+  .testi-controls { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 24px; }
+  .testi-arrow {
+    width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface);
+    color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.2s ease;
+  }
+  .testi-arrow:hover { border-color: var(--red); color: var(--red); }
+  .testi-dots { display: flex; gap: 8px; }
+  .testi-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
+  .testi-dot.active { background: var(--red); transform: scale(1.3); }
+
+  /* ---------- FAQ ---------- */
+
+  .faq-list { display: flex; flex-direction: column; gap: 12px; }
+  .faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color 0.2s ease; }
+  .faq-item[data-open="true"] { border-color: var(--red); }
+  .faq-question {
+    width: 100%; background: none; border: none; color: var(--text); font-family: 'Inter', sans-serif;
+    font-weight: 600; font-size: 16px; text-align: left; padding: 22px 24px; display: flex; align-items: center;
+    justify-content: space-between; gap: 16px; cursor: pointer;
+  }
+  .faq-plus { flex-shrink: 0; width: 24px; height: 24px; position: relative; }
+  .faq-plus::before, .faq-plus::after { content: ''; position: absolute; background: var(--red); top: 50%; left: 50%; transform: translate(-50%, -50%); transition: transform 0.25s ease; }
+  .faq-plus::before { width: 14px; height: 2px; }
+  .faq-plus::after { width: 2px; height: 14px; }
+  .faq-item[data-open="true"] .faq-plus::after { transform: translate(-50%, -50%) rotate(90deg); opacity: 0; }
+  .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+  .faq-answer p { color: var(--muted); font-size: 15px; padding: 0 24px 22px; }
+
+  /* ---------- CTA final ---------- */
+
+  .cta-final {
+    background: radial-gradient(circle at 30% 20%, var(--red-deep), var(--bg) 65%);
+    border: 1px solid var(--border); border-radius: 14px; padding: 64px 40px; text-align: center; position: relative; overflow: hidden;
+    animation: cta-glow-pulse 2.6s ease-in-out infinite;
+  }
+  .cta-final h2 { font-size: clamp(26px, 4vw, 38px); margin-bottom: 14px; }
+  .cta-final p { color: #d9d5d0; margin-bottom: 28px; }
+
+  @keyframes cta-glow-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--red-glow); border-color: var(--border); }
+    50% { box-shadow: 0 0 60px 6px var(--red-glow); border-color: var(--red); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cta-final { animation: none; }
+  }
+
+  /* ---------- Footer ---------- */
+
+  footer { border-top: 1px solid var(--border); padding: 32px 0; color: var(--muted); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+
+  /* ---------- Floating WhatsApp ---------- */
+
+  .float-wa {
+    position: fixed; bottom: 24px; right: 24px; z-index: 150;
+    width: 56px; height: 56px; border-radius: 50%; background: var(--red); color: #0b0b0c;
+    display: flex; align-items: center; justify-content: center; font-size: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease, background 0.2s ease;
+    isolation: isolate;
+  }
+  .float-wa.visible {
+    opacity: 1; pointer-events: auto;
+    animation: float-wa-float 2.5s ease-in-out infinite;
+  }
+  .float-wa:hover { background: #d9ad1f; animation-play-state: paused; }
+  .float-wa:hover::before { animation-play-state: paused; }
+
+  .float-wa::before {
+    content: '';
+    position: absolute; inset: 0; border-radius: 50%;
+    background: var(--red);
+    opacity: 0.55;
+    z-index: -1;
+    animation: float-wa-ring 1.6s ease-out infinite;
+  }
+
+  @keyframes float-wa-ring {
+    0% { transform: scale(1); opacity: 0.55; }
+    100% { transform: scale(2.1); opacity: 0; }
+  }
+
+  @keyframes float-wa-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<header>
+  <div class="nav wrap">
+    <a href="#" class="brand">FELIPE MESSINGER<span>.</span></a>
+    <nav class="nav-links">
+      <a href="#sobre" data-nav>Sobre</a>
+      <a href="#servicos" data-nav>Serviços</a>
+      <a href="#metodologia" data-nav>Metodologia</a>
+      <a href="#resultados" data-nav>Resultados</a>
+      <a href="#faq" data-nav>Dúvidas</a>
+    </nav>
+    <button class="burger" id="burgerBtn" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-panel" id="mobilePanel">
+    <a href="#sobre">Sobre</a>
+    <a href="#servicos">Serviços</a>
+    <a href="#metodologia">Metodologia</a>
+    <a href="#resultados">Resultados</a>
+    <a href="#faq">Dúvidas</a>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero" id="hero">
+    <div class="hero-glow"></div>
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">Consultoria esportiva</div>
+        <h1>Treino com plano, não com achismo.</h1>
+        <p class="lead">Acompanhamento individual pra quem quer evoluir de verdade — treino, avaliação e ajuste constante com base no que funciona pro seu corpo.</p>
+        <a class="btn-primary" href="https://wa.me/5500000000000?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20a%20consultoria." target="_blank" rel="noopener">Falar no WhatsApp →</a>
+
+        <div class="hero-stats">
+          <div><div class="stat-num" data-count="8">0</div><div class="stat-label">anos de experiência</div></div>
+          <div><div class="stat-num" data-count="150">0</div><div class="stat-label">alunos acompanhados</div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="photo-swap" tabindex="0">
+          <img class="foto-base" src="foto 1 felipe melhorada.jpg" alt="Felipe Messinger">
+          <img class="foto-pose" src="consultoria-fitness-2.jpg" alt="Felipe Messinger fazendo double biceps">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span>Treino personalizado</span><span>Acompanhamento real</span><span>Ajuste constante</span><span>Resultado comprovado</span>
+      <span>Treino personalizado</span><span>Acompanhamento real</span><span>Ajuste constante</span><span>Resultado comprovado</span>
+    </div>
+  </div>
+
+  <section id="sobre">
+    <div class="wrap sobre-grid">
+      <div class="sobre-text">
+        <div class="eyebrow">Sobre</div>
+        <h2>Quem te acompanha</h2>
+        <p>Escreva aqui 2-3 parágrafos sobre a trajetória dele: há quanto tempo trabalha com treino, sua formação/experiência, e o que diferencia o jeito dele de acompanhar os alunos.</p>
+        <p>Fale também sobre o método: como ele estrutura o treino, como acompanha a evolução, e o tipo de aluno que mais se beneficia do trabalho.</p>
+      </div>
+      <ul class="credenciais">
+        <li>Formação ou certificação relevante</li>
+        <li>Tempo de experiência prática</li>
+        <li>Especialidade (ex: hipertrofia, emagrecimento, performance)</li>
+        <li>Diferencial do acompanhamento</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divider wrap">
+
+  <section id="servicos">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">O que ele oferece</div>
+        <h2>Como funciona a consultoria</h2>
+        <p>Formas de acompanhamento disponíveis — ajuste os textos pra descrever exatamente o que ele entrega em cada uma.</p>
+      </div>
+      <div class="servicos-grid">
+        <div class="servico-card">
+          <div class="icon">A</div>
+          <h3>Consultoria online</h3>
+          <p>Treino personalizado, ajustado à distância com check-ins periódicos e suporte direto pelo WhatsApp.</p>
+        </div>
+        <div class="servico-card">
+          <div class="icon">B</div>
+          <h3>Acompanhamento presencial</h3>
+          <p>Sessões acompanhadas pessoalmente, com correção de execução e ajuste de carga em tempo real.</p>
+        </div>
+        <div class="servico-card">
+          <div class="icon">C</div>
+          <h3>Avaliação física</h3>
+          <p>Diagnóstico inicial pra entender ponto de partida, objetivo e montar o plano certo desde o início.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider wrap">
+
+  <section id="metodologia">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">Metodologia</div>
+        <h2>Metodologia explicada no canal Fábrica de Monstros</h2>
+        <p>Dois vídeos direto do canal Fábrica de Monstros mostrando como funciona o método de treino na prática.</p>
+      </div>
+      <div class="metodologia-grid">
+        <div class="video-card reveal">
+          <div class="video-frame">
+            <iframe src="https://www.youtube.com/embed/8mYkU3Zgjyg?start=40" title="Treino de Tríceps — Fábrica de Monstros" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            Treino de Tríceps
+            <span>Canal Fábrica de Monstros</span>
+          </div>
+        </div>
+        <div class="video-card reveal" style="transition-delay: 0.15s">
+          <div class="video-frame">
+            <iframe src="https://www.youtube.com/embed/V8gB2eonvgQ?start=482" title="Treino de Bíceps — Fábrica de Monstros" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            Treino de Bíceps
+            <span>Canal Fábrica de Monstros</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider wrap">
+
+  <section id="evolucao">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">Por que a metodologia importa</div>
+        <h2>Sem plano, o shape estagna. Com o método certo, dispara.</h2>
+        <p>Os dois gráficos mostram a evolução ao longo dos níveis — iniciante, intermediário e avançado — treinando sem acompanhamento e treinando com a metodologia.</p>
+      </div>
+      <div class="evo-grid reveal">
+        <div class="evo-chart-card">
+          <div class="evo-chart-label">Sem consultoria</div>
+          <div class="evo-chart-mount" id="evoChartWithout"></div>
+        </div>
+        <div class="evo-chart-card highlight">
+          <div class="evo-chart-label gold">Com a metodologia</div>
+          <div class="evo-chart-mount" id="evoChartWith"></div>
+        </div>
+      </div>
+      <p class="evo-note">Curvas ilustrativas — o ritmo real de evolução varia de aluno pra aluno, mas o padrão se repete: constância e ajuste vencem o achismo.</p>
+    </div>
+  </section>
+
+  <hr class="divider wrap">
+
+  <section id="resultados">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Resultados</div>
+        <h2>Arraste pra comparar</h2>
+        <p>Troque as fotos pelas reais de antes/depois de cada aluno (mesmo ângulo e enquadramento nas duas fotos) — passe pros outros alunos nas setas ou nos pontinhos.</p>
+      </div>
+      <div class="compare" id="compare">
+        <div class="compare-side compare-before" id="compareBeforeContent">ANTES</div>
+        <div class="compare-after-wrap" id="compareAfterWrap">
+          <div class="compare-side compare-after" id="compareAfterContent">DEPOIS</div>
+        </div>
+        <div class="compare-label left">Antes</div>
+        <div class="compare-label right">Depois</div>
+        <div class="compare-handle" id="compareHandle"></div>
+        <input type="range" min="0" max="100" value="50" class="compare-range" id="compareRange" aria-label="Comparar antes e depois">
+      </div>
+      <p class="compare-note">Arraste o controle pra ver a transformação</p>
+
+      <div class="resultado-meta">
+        <div class="resultado-aluno" id="resultadoAluno">Nome do aluno</div>
+        <div class="resultado-periodo" id="resultadoPeriodo">Tempo de acompanhamento</div>
+      </div>
+      <div class="testi-controls">
+        <button class="testi-arrow" id="resultadoPrev" aria-label="Aluno anterior">←</button>
+        <div class="testi-dots" id="resultadoDots"></div>
+        <button class="testi-arrow" id="resultadoNext" aria-label="Próximo aluno">→</button>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider wrap">
+
+  <section id="depoimentos">
+    <div class="wrap">
+      <div class="section-head" style="margin-left:auto;margin-right:auto;text-align:center;">
+        <div class="eyebrow" style="justify-content:center;">Depoimentos</div>
+        <h2>O que os alunos falam</h2>
+      </div>
+      <div class="testi-wrap">
+        <div class="testi-track">
+          <div class="testi-slides" id="testiSlides">
+            <div class="testi-slide">
+              <div class="testi-card">
+                <p class="quote">"Escreva aqui um depoimento real de um aluno sobre o resultado e o acompanhamento."</p>
+                <div class="testi-name">Nome do aluno</div>
+                <div class="testi-role">Aluno há X meses</div>
+              </div>
+            </div>
+            <div class="testi-slide">
+              <div class="testi-card">
+                <p class="quote">"Segundo depoimento aqui — troque pelo texto real de outro aluno."</p>
+                <div class="testi-name">Nome do aluno</div>
+                <div class="testi-role">Aluno há X meses</div>
+              </div>
+            </div>
+            <div class="testi-slide">
+              <div class="testi-card">
+                <p class="quote">"Terceiro depoimento — pode adicionar quantos quiser copiando o bloco .testi-slide."</p>
+                <div class="testi-name">Nome do aluno</div>
+                <div class="testi-role">Aluno há X meses</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-controls">
+          <button class="testi-arrow" id="testiPrev" aria-label="Depoimento anterior">←</button>
+          <div class="testi-dots" id="testiDots"></div>
+          <button class="testi-arrow" id="testiNext" aria-label="Próximo depoimento">→</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider wrap">
+
+  <section id="instagram">
+    <div class="wrap">
+      <div class="insta-head reveal">
+        <div>
+          <div class="eyebrow">Instagram</div>
+          <h2>Acompanhe o dia a dia nos treinos</h2>
+        </div>
+        <!-- Troque o href pelo link real do perfil -->
+        <a class="insta-handle" href="https://instagram.com/felipemessinger" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle></svg>
+          @felipemessinger
+        </a>
+      </div>
+
+      <!-- Carrossel de stories: cards empilhados no centro + tira de miniaturas embaixo.
+           Preencha "media" em cada item do array STORIES (no script, no fim da página) com a imagem/vídeo real. -->
+      <div class="stories-carousel reveal" id="storiesCarousel">
+        <div class="stories-stage" id="storiesStage"></div>
+        <div class="stories-thumbs-row">
+          <button class="stories-nav prev" id="storiesPrevBtn" aria-label="Story anterior">‹</button>
+          <div class="stories-thumbs" id="storiesThumbs"></div>
+          <button class="stories-nav next" id="storiesNextBtn" aria-label="Próximo story">›</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <hr class="divider wrap">
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Dúvidas frequentes</div>
+        <h2>Antes de chamar no WhatsApp</h2>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item" data-open="false">
+          <button class="faq-question">Preciso já ter experiência com treino pra começar?<span class="faq-plus"></span></button>
+          <div class="faq-answer"><p>Não. O plano é montado de acordo com o seu nível atual, seja você iniciante ou avançado.</p></div>
+        </div>
+        <div class="faq-item" data-open="false">
+          <button class="faq-question">A consultoria é só treino ou também tem orientação de dieta?<span class="faq-plus"></span></button>
+          <div class="faq-answer"><p>Descreva aqui exatamente o que está incluso no acompanhamento.</p></div>
+        </div>
+        <div class="faq-item" data-open="false">
+          <button class="faq-question">Preciso ir à academia ou dá pra treinar em casa?<span class="faq-plus"></span></button>
+          <div class="faq-answer"><p>Explique aqui as opções disponíveis (academia, casa, ao ar livre etc.).</p></div>
+        </div>
+        <div class="faq-item" data-open="false">
+          <button class="faq-question">Como funciona o acompanhamento no dia a dia?<span class="faq-plus"></span></button>
+          <div class="faq-answer"><p>Explique a frequência de contato, ajustes de treino e canal usado (WhatsApp, planilha, app etc.).</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="cta-final">
+        <h2>Bora começar?</h2>
+        <p>Manda uma mensagem e explica seu objetivo — a resposta é rápida.</p>
+        <a class="btn-primary" href="https://wa.me/5500000000000?text=Ol%C3%A1!%20Quero%20come%C3%A7ar%20a%20consultoria." target="_blank" rel="noopener">Chamar no WhatsApp →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <span>© 2026 Felipe Messinger. Todos os direitos reservados.</span>
+  <span>Feito por Ian</span>
+</footer>
+
+<a class="float-wa visible" id="floatWa" href="https://wa.me/5500000000000" target="_blank" rel="noopener" aria-label="Chamar no WhatsApp">☎</a>
+
+<script>
+  // Scroll progress bar
+  var progressBar = document.getElementById('progressBar');
+  function updateProgress() {
+    var h = document.documentElement;
+    var scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    progressBar.style.width = scrolled + '%';
+  }
+  document.addEventListener('scroll', updateProgress);
+
+  // Mobile menu
+  var burgerBtn = document.getElementById('burgerBtn');
+  var mobilePanel = document.getElementById('mobilePanel');
+  burgerBtn.addEventListener('click', function () {
+    burgerBtn.classList.toggle('open');
+    mobilePanel.classList.toggle('open');
+  });
+  mobilePanel.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      burgerBtn.classList.remove('open');
+      mobilePanel.classList.remove('open');
+    });
+  });
+
+  // Active nav link on scroll
+  var sections = document.querySelectorAll('section[id]');
+  var navLinks = document.querySelectorAll('.nav-links a[data-nav]');
+  var navObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        navLinks.forEach(function (l) { l.classList.remove('active'); });
+        var match = document.querySelector('.nav-links a[href="#' + entry.target.id + '"]');
+        if (match) match.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  sections.forEach(function (s) { navObserver.observe(s); });
+
+  // Botão flutuante de WhatsApp já visível e pulsando desde o carregamento da página
+
+  // Animated counters
+  var counters = document.querySelectorAll('.stat-num[data-count]');
+  var countersObserver = new IntersectionObserver(function (entries, obs) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target;
+      var target = parseInt(el.getAttribute('data-count'), 10);
+      var start = 0;
+      var duration = 1200;
+      var startTime = null;
+      function step(ts) {
+        if (!startTime) startTime = ts;
+        var progress = Math.min((ts - startTime) / duration, 1);
+        el.textContent = Math.floor(progress * (target - start) + start) + (progress === 1 ? '+' : '');
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+      obs.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(function (c) { countersObserver.observe(c); });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(function (item) {
+    var btn = item.querySelector('.faq-question');
+    var answer = item.querySelector('.faq-answer');
+    btn.addEventListener('click', function () {
+      var isOpen = item.getAttribute('data-open') === 'true';
+      document.querySelectorAll('.faq-item').forEach(function (other) {
+        if (other !== item) {
+          other.setAttribute('data-open', 'false');
+          other.querySelector('.faq-answer').style.maxHeight = null;
+        }
+      });
+      if (isOpen) {
+        item.setAttribute('data-open', 'false');
+        answer.style.maxHeight = null;
+      } else {
+        item.setAttribute('data-open', 'true');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // Before/after compare slider — agora com vários alunos pra passar
+  // Preencha "before" e "after" com o caminho da foto de cada aluno quando tiver (ex.: "resultados/aluno1-antes.jpg").
+  // Deixando null, o card mostra o texto ANTES/DEPOIS como placeholder.
+  var RESULTADOS = [
+    { aluno: 'Nome do aluno 1', periodo: '12 semanas de acompanhamento', before: null, after: null },
+    { aluno: 'Nome do aluno 2', periodo: '4 meses de consultoria', before: null, after: null },
+    { aluno: 'Nome do aluno 3', periodo: '6 meses de acompanhamento', before: null, after: null }
+  ];
+
+  var compareRange = document.getElementById('compareRange');
+  var compareAfterWrap = document.getElementById('compareAfterWrap');
+  var compareHandle = document.getElementById('compareHandle');
+  var compareBeforeContent = document.getElementById('compareBeforeContent');
+  var compareAfterContent = document.getElementById('compareAfterContent');
+  var resultadoAluno = document.getElementById('resultadoAluno');
+  var resultadoPeriodo = document.getElementById('resultadoPeriodo');
+  var resultadoDots = document.getElementById('resultadoDots');
+  var resultadoIndex = 0;
+
+  function updateCompare(val) {
+    compareAfterWrap.style.clipPath = 'inset(0 ' + (100 - val) + '% 0 0)';
+    compareHandle.style.left = val + '%';
+  }
+  compareRange.addEventListener('input', function () { updateCompare(this.value); });
+
+  function renderResultado() {
+    var r = RESULTADOS[resultadoIndex];
+    compareBeforeContent.innerHTML = r.before ? '<img src="' + r.before + '" alt="Antes — ' + r.aluno + '">' : 'ANTES';
+    compareAfterContent.innerHTML = r.after ? '<img src="' + r.after + '" alt="Depois — ' + r.aluno + '">' : 'DEPOIS';
+    resultadoAluno.textContent = r.aluno;
+    resultadoPeriodo.textContent = r.periodo;
+    compareRange.value = 50;
+    updateCompare(50);
+
+    resultadoDots.innerHTML = '';
+    RESULTADOS.forEach(function (_, i) {
+      var dot = document.createElement('button');
+      dot.className = 'testi-dot' + (i === resultadoIndex ? ' active' : '');
+      dot.setAttribute('aria-label', 'Ir para aluno ' + (i + 1));
+      dot.addEventListener('click', function () { goToResultado(i); });
+      resultadoDots.appendChild(dot);
+    });
+  }
+
+  function goToResultado(i) {
+    resultadoIndex = (i + RESULTADOS.length) % RESULTADOS.length;
+    renderResultado();
+  }
+
+  document.getElementById('resultadoPrev').addEventListener('click', function () { goToResultado(resultadoIndex - 1); });
+  document.getElementById('resultadoNext').addEventListener('click', function () { goToResultado(resultadoIndex + 1); });
+
+  renderResultado();
+
+  // Testimonial carousel
+  var testiSlides = document.getElementById('testiSlides');
+  var slides = testiSlides.querySelectorAll('.testi-slide');
+  var testiDots = document.getElementById('testiDots');
+  var current = 0;
+  slides.forEach(function (_, i) {
+    var dot = document.createElement('button');
+    dot.className = 'testi-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Ir para depoimento ' + (i + 1));
+    dot.addEventListener('click', function () { goTo(i); });
+    testiDots.appendChild(dot);
+  });
+  var dots = testiDots.querySelectorAll('.testi-dot');
+  function goTo(i) {
+    current = (i + slides.length) % slides.length;
+    testiSlides.style.transform = 'translateX(-' + (current * 100) + '%)';
+    dots.forEach(function (d, idx) { d.classList.toggle('active', idx === current); });
+  }
+  document.getElementById('testiPrev').addEventListener('click', function () { goTo(current - 1); });
+  document.getElementById('testiNext').addEventListener('click', function () { goTo(current + 1); });
+  var testiAuto = setInterval(function () { goTo(current + 1); }, 6000);
+  testiSlides.addEventListener('mouseenter', function () { clearInterval(testiAuto); });
+
+  // Revelar elementos (ex.: vídeos da metodologia) ao rolar a página
+  var revealEls = document.querySelectorAll('.reveal');
+  var revealObserver = new IntersectionObserver(function (entries, obs) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  revealEls.forEach(function (el) { revealObserver.observe(el); });
+
+  // ---------- Gráficos de evolução (barras + curva) ----------
+  // Ajuste os números em EVO_SEM e EVO_COM (de 0 a 1) pra mudar a altura de cada barra.
+  var EVO_SEM = [0.12, 0.16, 0.20, 0.24, 0.27, 0.30, 0.32, 0.34, 0.35];
+  var EVO_COM = [0.12, 0.22, 0.34, 0.48, 0.60, 0.72, 0.83, 0.92, 1.00];
+  var EVO_LEVELS = ['NÍVEL INICIANTE', 'NÍVEL INTERMEDIÁRIO', 'NÍVEL AVANÇADO'];
+
+  function catmullRomToBezier(points) {
+    var d = 'M' + points[0].x + ',' + points[0].y + ' ';
+    for (var i = 0; i < points.length - 1; i++) {
+      var p0 = points[i - 1] || points[i];
+      var p1 = points[i];
+      var p2 = points[i + 1];
+      var p3 = points[i + 2] || p2;
+      var c1x = p1.x + (p2.x - p0.x) / 6;
+      var c1y = p1.y + (p2.y - p0.y) / 6;
+      var c2x = p2.x - (p3.x - p1.x) / 6;
+      var c2y = p2.y - (p3.y - p1.y) / 6;
+      d += 'C' + c1x + ',' + c1y + ' ' + c2x + ',' + c2y + ' ' + p2.x + ',' + p2.y + ' ';
+    }
+    return d;
+  }
+
+  function buildEvoChart(mountId, heightsPct, gradId, gradFrom, gradTo) {
+    var W = 400, H = 250;
+    var barsCount = heightsPct.length;
+    var chartLeft = 22, chartRight = 378, chartBottom = 190, chartTop = 14;
+    var barAreaWidth = chartRight - chartLeft;
+    var barWidth = 24;
+    var gap = (barAreaWidth - barWidth * barsCount) / (barsCount - 1);
+
+    var points = [];
+    var barsSvg = '';
+    var gridSvg = '';
+    for (var i = 0; i < barsCount; i++) {
+      var x = chartLeft + i * (barWidth + gap);
+      var barHeight = heightsPct[i] * (chartBottom - chartTop);
+      var y = chartBottom - barHeight;
+      gridSvg += '<line x1="' + (x + barWidth / 2) + '" y1="4" x2="' + (x + barWidth / 2) + '" y2="' + chartBottom + '" stroke="rgba(255,255,255,0.08)" stroke-width="1"></line>';
+      barsSvg += '<rect class="evo-bar" x="' + x + '" y="' + y + '" width="' + barWidth + '" height="' + barHeight + '" rx="4" fill="url(#' + gradId + ')"></rect>';
+      points.push({ x: x + barWidth / 2, y: y - 6 });
+    }
+    var curveD = catmullRomToBezier(points);
+    var lastPoint = points[points.length - 1];
+
+    var barsPerLevel = Math.round(barsCount / 3);
+    var bracketsSvg = '';
+    for (var g = 0; g < 3; g++) {
+      var startBar = g * barsPerLevel;
+      var endBar = Math.min(startBar + barsPerLevel - 1, barsCount - 1);
+      var xStart = chartLeft + startBar * (barWidth + gap) - 4;
+      var xEnd = chartLeft + endBar * (barWidth + gap) + barWidth + 4;
+      var yBracket = chartBottom + 14;
+      bracketsSvg +=
+        '<path class="evo-bracket" d="M' + xStart + ',' + (yBracket - 6) + ' L' + xStart + ',' + yBracket + ' L' + xEnd + ',' + yBracket + ' L' + xEnd + ',' + (yBracket - 6) + '"></path>' +
+        '<text class="evo-level-label" x="' + ((xStart + xEnd) / 2) + '" y="' + (yBracket + 16) + '">' + EVO_LEVELS[g] + '</text>';
+    }
+
+    var bgId = 'bg' + gradId;
+    var svg =
+      '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gráfico de evolução por nível">' +
+        '<defs>' +
+          '<radialGradient id="' + bgId + '" cx="30%" cy="15%" r="90%">' +
+            '<stop offset="0%" style="stop-color:' + gradTo + '; stop-opacity:0.35"></stop>' +
+            '<stop offset="100%" style="stop-color:#0b0b0c; stop-opacity:1"></stop>' +
+          '</radialGradient>' +
+          '<linearGradient id="' + gradId + '" x1="0" y1="1" x2="0" y2="0">' +
+            '<stop offset="0%" style="stop-color:' + gradFrom + '"></stop>' +
+            '<stop offset="100%" style="stop-color:' + gradTo + '"></stop>' +
+          '</linearGradient>' +
+        '</defs>' +
+        '<rect x="0" y="0" width="' + W + '" height="' + H + '" rx="10" fill="url(#' + bgId + ')"></rect>' +
+        gridSvg +
+        barsSvg +
+        '<path class="evo-curve" d="' + curveD + '"></path>' +
+        '<circle class="evo-curve-dot" cx="' + lastPoint.x + '" cy="' + lastPoint.y + '" r="5"></circle>' +
+        '<line class="evo-baseline" x1="' + (chartLeft - 6) + '" y1="' + chartBottom + '" x2="' + (chartRight + 6) + '" y2="' + chartBottom + '"></line>' +
+        bracketsSvg +
+      '</svg>';
+
+    document.getElementById(mountId).innerHTML = svg;
+  }
+
+  buildEvoChart('evoChartWithout', EVO_SEM, 'evoGradSem', '#4a4a4d', '#9a9a9e');
+  buildEvoChart('evoChartWith', EVO_COM, 'evoGradCom', '#7a5e0e', '#f2c230');
+
+  // ---------- Carrossel de stories do Instagram (cards empilhados) ----------
+  // Preencha "media" com a URL/caminho da imagem ou vídeo de cada story quando tiver o arquivo real.
+  // Ex.: media: "stories/treino1.jpg"   (imagem)
+  //      media: "stories/treino1.mp4"  (vídeo — tem que terminar em .mp4, .webm ou .mov)
+  // O tipo (foto ou vídeo) é detectado sozinho pela extensão do arquivo.
+  var STORIES = [
+    { title: 'Treino', caption: 'Treino pesado de hoje 💪', media: null },
+    { title: 'Bastidores', caption: 'Bastidores da consultoria', media: null },
+    { title: 'Dieta', caption: 'Refeição de hoje', media: null },
+    { title: 'Alunos', caption: 'Resultado de aluno', media: null },
+    { title: 'Rotina', caption: 'Rotina de treino', media: null },
+    { title: 'Resultados', caption: 'Antes e depois', media: null }
+  ];
+
+  var DEFAULT_DURATION = 5000; // duração de cada story (ms) quando não é vídeo, ou até o vídeo carregar
+
+  var storiesStage = document.getElementById('storiesStage');
+  var storiesThumbs = document.getElementById('storiesThumbs');
+  var storiesIndex = 0;
+  var storyMuted = true;
+  var storyTimer = null;
+  var storyDuration = DEFAULT_DURATION;
+  var isPaused = false;
+
+  function isVideoSrc(src) { return /\.(mp4|webm|mov)$/i.test(src || ''); }
+
+  function mediaTag(media, alt) {
+    if (!media) return null;
+    return isVideoSrc(media)
+      ? '<video src="' + media + '" playsinline></video>'
+      : '<img src="' + media + '" alt="' + alt + '">';
+  }
+
+  function buildProgress(total) {
+    var html = '<div class="story-progress" id="storyProgress">';
+    for (var i = 0; i < total; i++) html += '<div class="story-progress-seg"><i></i></div>';
+    html += '</div>';
+    return html;
+  }
+
+  function renderStage() {
+    clearTimeout(storyTimer);
+    var total = STORIES.length;
+    var leftIdx = (storiesIndex - 1 + total) % total;
+    var rightIdx = (storiesIndex + 1) % total;
+    var mainStory = STORIES[storiesIndex];
+    var leftStory = STORIES[leftIdx];
+    var rightStory = STORIES[rightIdx];
+
+    var leftTag = mediaTag(leftStory.media, leftStory.title);
+    var rightTag = mediaTag(rightStory.media, rightStory.title);
+    var mainTag = mediaTag(mainStory.media, mainStory.title);
+
+    storiesStage.innerHTML =
+      '<div class="story-peek left" data-goto="' + leftIdx + '">' +
+        (leftTag || '<div class="story-peek-placeholder"><strong>' + leftStory.title + '</strong></div>') +
+      '</div>' +
+      '<div class="story-main" id="storyMainCard">' +
+        buildProgress(total) +
+        (mainTag || '<div class="story-main-placeholder"><strong>' + mainStory.title + '</strong><span>Poste aqui o story de ' + mainStory.title.toLowerCase() + '</span></div>') +
+        '<button class="story-main-mute" id="storyMuteBtn" aria-label="Ativar som">' + (storyMuted ? '🔇' : '🔊') + '</button>' +
+        '<button class="story-tap prev" id="storyTapPrev" aria-label="Story anterior"></button>' +
+        '<button class="story-tap next" id="storyTapNext" aria-label="Próximo story"></button>' +
+        '<div class="story-main-caption">' + mainStory.caption + '</div>' +
+      '</div>' +
+      '<div class="story-peek right" data-goto="' + rightIdx + '">' +
+        (rightTag || '<div class="story-peek-placeholder"><strong>' + rightStory.title + '</strong></div>') +
+      '</div>';
+
+    // pular direto pra um story clicando no card "espiado" atrás
+    storiesStage.querySelectorAll('.story-peek').forEach(function (peek) {
+      peek.addEventListener('click', function () { goToStory(parseInt(peek.getAttribute('data-goto'), 10)); });
+    });
+
+    // botão de mudo — controla o vídeo atual e continua no mesmo estado ao trocar de story
+    var muteBtn = document.getElementById('storyMuteBtn');
+    var video = storiesStage.querySelector('.story-main video');
+    if (video) {
+      video.muted = storyMuted;
+      video.play().catch(function () {}); // navegadores exigem play() após interação em alguns casos
+      video.addEventListener('loadedmetadata', function () {
+        if (video.duration && isFinite(video.duration)) startProgress(video.duration * 1000);
+      });
+      video.addEventListener('ended', function () { goToStory(storiesIndex + 1); });
+    }
+    muteBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      storyMuted = !storyMuted;
+      muteBtn.textContent = storyMuted ? '🔇' : '🔊';
+      if (video) video.muted = storyMuted;
+    });
+
+    // toque nas laterais = anterior / próximo, igual Instagram
+    document.getElementById('storyTapPrev').addEventListener('click', function () { goToStory(storiesIndex - 1); });
+    document.getElementById('storyTapNext').addEventListener('click', function () { goToStory(storiesIndex + 1); });
+
+    // segurar o card pausa o progresso e o vídeo (como no Instagram)
+    var mainCard = document.getElementById('storyMainCard');
+    mainCard.addEventListener('pointerdown', function () { pauseStory(video); });
+    mainCard.addEventListener('pointerup', function () { resumeStory(video); });
+    mainCard.addEventListener('pointerleave', function () { resumeStory(video); });
+
+    // arrastar (swipe) no card principal também troca de story, no touch e no mouse
+    var dragStartX = null;
+    mainCard.addEventListener('pointerdown', function (e) { dragStartX = e.clientX; });
+    mainCard.addEventListener('pointerup', function (e) {
+      if (dragStartX === null) return;
+      var diff = e.clientX - dragStartX;
+      dragStartX = null;
+      if (Math.abs(diff) > 40) {
+        if (diff < 0) goToStory(storiesIndex + 1); else goToStory(storiesIndex - 1);
+      }
+    });
+
+    startProgress(isVideoSrc(mainStory.media) ? DEFAULT_DURATION : DEFAULT_DURATION);
+  }
+
+  function startProgress(duration) {
+    storyDuration = duration || DEFAULT_DURATION;
+    isPaused = false;
+    clearTimeout(storyTimer);
+    var segs = document.querySelectorAll('#storyProgress .story-progress-seg');
+    segs.forEach(function (seg, idx) {
+      seg.classList.remove('active', 'done', 'paused');
+      var bar = seg.querySelector('i');
+      bar.style.animation = 'none';
+      bar.style.width = '0%';
+      if (idx < storiesIndex) { seg.classList.add('done'); bar.style.width = '100%'; }
+    });
+    var activeSeg = segs[storiesIndex];
+    if (!activeSeg) return;
+    activeSeg.style.setProperty('--story-dur', storyDuration + 'ms');
+    void activeSeg.offsetWidth;
+    activeSeg.classList.add('active');
+    storyTimer = setTimeout(function () { goToStory(storiesIndex + 1); }, storyDuration);
+  }
+
+  function pauseStory(video) {
+    isPaused = true;
+    clearTimeout(storyTimer);
+    var activeSeg = document.querySelector('#storyProgress .story-progress-seg.active');
+    if (activeSeg) activeSeg.classList.add('paused');
+    if (video) video.pause();
+  }
+
+  function resumeStory(video) {
+    if (!isPaused) return;
+    isPaused = false;
+    var activeSeg = document.querySelector('#storyProgress .story-progress-seg.active');
+    if (activeSeg) activeSeg.classList.remove('paused');
+    if (video) video.play().catch(function () {});
+    // continua a barra de onde ficaria — simplificação: retoma pelo tempo total restante padrão
+    storyTimer = setTimeout(function () { goToStory(storiesIndex + 1); }, storyDuration);
+  }
+
+  function renderThumbs() {
+    storiesThumbs.innerHTML = '';
+    STORIES.forEach(function (story, i) {
+      var thumb = document.createElement('button');
+      thumb.className = 'story-thumb' + (i === storiesIndex ? ' active' : '');
+      thumb.setAttribute('aria-label', story.title);
+      var tag = mediaTag(story.media, story.title);
+      thumb.innerHTML = tag || '<div class="story-thumb-placeholder">' + story.title + '</div>';
+      thumb.addEventListener('click', function () { goToStory(i); });
+      storiesThumbs.appendChild(thumb);
+    });
+  }
+
+  function goToStory(newIndex) {
+    var total = STORIES.length;
+    storiesIndex = (newIndex + total) % total;
+    renderStage();
+    renderThumbs();
+  }
+
+  document.getElementById('storiesPrevBtn').addEventListener('click', function () { goToStory(storiesIndex - 1); });
+  document.getElementById('storiesNextBtn').addEventListener('click', function () { goToStory(storiesIndex + 1); });
+
+  renderStage();
+  renderThumbs();
+</script>
+
+</body>
+</html>
